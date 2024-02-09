@@ -1,0 +1,74 @@
+name: Build Images
+
+concurrency: ${{ github.ref }}
+
+on: 
+  push:
+    branches: [main]
+    paths:
+      - 'images/**'
+      - 'scripts/**'
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    if: "!contains(join(github.event.commits.*.message), '+nobuild')"
+
+    env:
+      RESOURCE_GROUP_NAME: aqovia-devbox
+      IDENTITY_NAME: aqovia-devcenter-identity
+      GALLARY_NAME: aqovia_compute_gallery
+      VNET_NAME: aqovia-devbox-builder-vnet
+      SUBNET_NAME: default
+      STORAGE_ACCOUNT_NAME: aqdevboxbuilderstrg
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to Azure
+        run: az login --service-principal -u ${{ secrets.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+          
+      - name: Ensure Bicep
+        run: az bicep upgrade
+      
+      - name: Update pre_build/main.parameters.json
+        uses: restackio/update-json-file-action@v2.0
+        with:
+          file: ./resources/pre_build/main.parameters.json
+          fields: | 
+            { 
+              "identityName" : "${{env.IDENTITY_NAME}}",
+              "galleryName": "${{env.GALLARY_NAME}}" ,
+              "network.name": "${{env.VNET_NAME}}",
+              "network.subnetName": "${{env.SUBNET_NAME}}",
+              "storage.name": "${{env.STORAGE_ACCOUNT_NAME}}"
+            }
+
+      - name: Deploy Bicep
+        working-directory: ./resources
+        run: az deployment group create 
+          --resource-group ${{ env.RESOURCE_GROUP_NAME }}
+          --template-file ./pre_build/main.bicep 
+
+      - name: Set subnet resource id as SUBNET_ID environment variable
+        run: |
+          subnetResourceId=$(az network vnet subnet list \
+            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+            --vnet-name ${{ env.VNET_NAME }} \
+            --query "[?name=='${{ env.SUBNET_NAME }}'].id" \
+            --output tsv);
+          echo "SUBNET_ID=$subnetResourceId" >> $GITHUB_ENV
+
+      - name: Deploy Build ACI Containers
+        run: python "./builder/build.py" --async 
+          --repository "${{ github.repositoryUrl }}" 
+          --revision "${{ github.sha }}" 
+          --token "${{ github.token }}" 
+          --client-id "${{ secrets.AZURE_CLIENT_ID }}" 
+          --client-secret "${{ secrets.AZURE_CLIENT_SECRET }}" 
+          --storage-account "${{ env.STORAGE_ACCOUNT_NAME }}" 
+          --subnet-id "${{ env.SUBNET_ID }}"
+

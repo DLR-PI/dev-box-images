@@ -24,18 +24,19 @@ resource roleAssignmentsContributor 'Microsoft.Authorization/roleAssignments@202
 }
 
 
-module networkModule '../template/network/main.bicep' = {
-  name: 'Microsoft.Network-${deploymentId}'
+module networkModule '../templates/network/main.bicep' = {
+  name: 'deploy-network-${deploymentId}'
   params: {
     name: settings.network.name
+    subnetName: settings.network.subnetName
     location: location
     vnetAddressPrefix: settings.network.vnetAddressPrefix
     defaultSubnetAddressPrefix : settings.network.defaultSubnetAddressPrefix
   }
 }
 
-module storageModele '../template/storage/main.bicep' = {
-  name: guid('Microsoft.Storage-${deploymentId}')
+module storageModele '../templates/storage/main.bicep' = {
+  name: guid('deploy-storage-${deploymentId}')
   params: {
     name: settings.storage.name
     sku: settings.storage.sku

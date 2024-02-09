@@ -2,6 +2,7 @@ param name string
 param location string
 param vnetAddressPrefix string
 param defaultSubnetAddressPrefix string
+param subnetName string
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: name
@@ -14,7 +15,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
     }
     subnets: [
       {
-        name: 'default'
+        name: subnetName
         properties: {
           addressPrefix: defaultSubnetAddressPrefix
           delegations: [

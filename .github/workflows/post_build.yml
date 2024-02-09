@@ -1,4 +1,4 @@
-name: Postdeploy
+name: Post Build
 
 concurrency: ${{ github.ref }}
 
@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      RESOURCE_GROUP_NAME: "aqovia-devbox"
-      IDENTITY_NAME: "aqovia-devcenter-identity"
-      GALLARY_NAME: "aqovia_compute_gallery"
-      DEVCENTER_NAME: "aqovia-devcenter"
-      NETWORK_CONNECTION_NAME: "aqovia-devbox-network-connection"
-      PROJECT_NAME: "aqovia-devbox-project"
-      POOL_NAME: "aqovia-devbox-project-pool"
-      DEFFINITION_NAME: "aqovia-devbox-definition"
-      DEFFINITION_SKU: "general_i_8c32gb256ssd_v2" # sku of image (for getting sku list run this command "az devcenter admin sku list --query '[].name' --output table")
-      DEFFINITION_IMAGE: "Win11-DevBox" # name of image (the same name as folder in ./images)
+      RESOURCE_GROUP_NAME: aqovia-devbox
+      IDENTITY_NAME: aqovia-devcenter-identity
+      GALLARY_NAME: aqovia_compute_gallery
+      DEVCENTER_NAME: aqovia-devcenter
+      NETWORK_CONNECTION_NAME: aqovia-devbox-network-connection
+      PROJECT_NAME: aqovia-devbox-project
+      POOL_NAME: aqovia-devbox-project-pool
+      DEFFINITION_NAME: aqovia-devbox-definition
+      DEFFINITION_SKU: general_i_8c32gb256ssd_v2 # sku of image (for getting sku list run this command "az devcenter admin sku list --query '[].name' --output table")
+      DEFFINITION_IMAGE: Win11-DevBox # name of image (the same name as folder in ./images)
       
 
     steps:
@@ -32,10 +32,10 @@ jobs:
       - name: Ensure Bicep
         run: az bicep upgrade
         
-      - name: Update postdeploy/main.parameters.json
+      - name: Update post_build/main.parameters.json
         uses: restackio/update-json-file-action@v2.0
         with:
-          file: ./src_bicep/postdeploy/main.parameters.json
+          file: ./resources/post_build/main.parameters.json
           fields: |
             {
               "devcenterName" : "${{ env.DEVCENTER_NAME }}",
@@ -51,8 +51,8 @@ jobs:
             }
 
       - name: Deploy Bicep
-        working-directory: ./src_bicep
+        working-directory: ./resources
         run: az deployment group create 
-          --name "postdeploy-${{ github.run_id }}"
+          --name "post_build-${{ github.run_id }}"
           --resource-group ${{ env.RESOURCE_GROUP_NAME }}
-          --template-file ./postdeploy/main.bicep
+          --template-file ./post_build/main.bicep
