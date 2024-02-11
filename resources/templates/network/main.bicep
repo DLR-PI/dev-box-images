@@ -3,6 +3,10 @@ param location string
 param vnetAddressPrefix string
 param defaultSubnetAddressPrefix string
 param subnetName string
+param delegations array
+param networkSecurityGroup object
+
+var isNetworkSecurityGroup = networkSecurityGroup != {}
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: name
@@ -16,18 +20,15 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-05-01' = {
     subnets: [
       {
         name: subnetName
-        properties: {
+        properties: union({
           addressPrefix: defaultSubnetAddressPrefix
-          delegations: [
-            {
-              name: 'Microsoft.ContainerInstance/containerGroups'
-              properties: {
-                serviceName: 'Microsoft.ContainerInstance/containerGroups'
-              }
-            }
-          ]
-        }
+          delegations: delegations
+        }, isNetworkSecurityGroup ? {
+          networkSecurityGroup: networkSecurityGroup
+        }: {})
       }
     ]
   }
 }
+
+output subnetId string = virtualNetwork.properties.subnets[0].id

@@ -2,8 +2,12 @@ var settings = loadJsonContent('main.parameters.json')
 param location string = resourceGroup().location
 param deploymentId string = newGuid()
 
-resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
-  name: settings.identityName
+module identity '../templates/identity/main.bicep' = {
+  name: 'deploy-identity-${deploymentId}'
+  params: {
+    name: settings.identityName
+    location: location
+  }
 }
 
 resource gallery 'Microsoft.Compute/galleries@2022-03-03' = {
@@ -18,7 +22,7 @@ resource roleAssignmentsContributor 'Microsoft.Authorization/roleAssignments@202
   name: guid(gallery.name, 'Contributor')
   properties: {
     roleDefinitionId: contributorRoleId
-    principalId: identity.properties.principalId
+    principalId: identity.outputs.principalId
     principalType: 'ServicePrincipal'
   }
 }
@@ -32,10 +36,19 @@ module networkModule '../templates/network/main.bicep' = {
     location: location
     vnetAddressPrefix: settings.network.vnetAddressPrefix
     defaultSubnetAddressPrefix : settings.network.defaultSubnetAddressPrefix
+    networkSecurityGroup: {}
+    delegations: [
+      {
+        name: 'Microsoft.ContainerInstance/containerGroups'
+        properties: {
+          serviceName: 'Microsoft.ContainerInstance/containerGroups'
+        }
+      }
+    ]
   }
 }
 
-module storageModele '../templates/storage/main.bicep' = {
+module storageModule '../templates/storage/main.bicep' = {
   name: guid('deploy-storage-${deploymentId}')
   params: {
     name: settings.storage.name

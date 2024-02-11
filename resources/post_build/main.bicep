@@ -1,20 +1,45 @@
 var settings = loadJsonContent('main.parameters.json')
 param location string = resourceGroup().location
-
-resource networkConnection 'Microsoft.DevCenter/networkConnections@2023-04-01' existing = {
-  name: settings.networkConnectionName
-}
+param deploymentId string = newGuid()
 
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name: settings.identityName
 }
 
-resource project 'Microsoft.DevCenter/projects@2023-04-01' existing = {
-  name: settings.projectName
-}
-
 resource gallery 'Microsoft.Compute/galleries@2022-03-03' existing = {
   name: settings.galleryName
+}
+
+module networkModule '../templates/network/main.bicep' = {
+  name: 'deploy-devcenter-network-${deploymentId}'
+  params: {
+    name: settings.devcenterNetwork.name
+    subnetName: settings.devcenterNetwork.subnetName
+    location: location
+    vnetAddressPrefix: settings.devcenterNetwork.vnetAddressPrefix
+    defaultSubnetAddressPrefix : settings.devcenterNetwork.defaultSubnetAddressPrefix
+    networkSecurityGroup: {
+      id: securityGroup.id
+    }
+    delegations: []
+  }
+}
+
+resource securityGroup 'Microsoft.Network/networkSecurityGroups@2023-05-01' = {
+  name: settings.sequrityGroupName
+  location: location
+  properties: {
+    securityRules: []
+  }
+}
+
+resource networkConnection 'Microsoft.DevCenter/networkConnections@2023-04-01' = {
+  name: settings.networkConnectionName
+  location: location
+  properties: {
+    domainJoinType: 'AzureADJoin'
+    subnetId: networkModule.outputs.subnetId
+  }
 }
 
 resource devcenter 'Microsoft.DevCenter/devcenters@2023-04-01' = {
@@ -25,6 +50,14 @@ resource devcenter 'Microsoft.DevCenter/devcenters@2023-04-01' = {
     userAssignedIdentities: {
       '${identity.id}': {}
     }
+  }
+}
+
+resource project 'Microsoft.DevCenter/projects@2023-04-01' = {
+  name: settings.projectName
+  location: location
+  properties: {
+    devCenterId: devcenter.id
   }
 }
 
