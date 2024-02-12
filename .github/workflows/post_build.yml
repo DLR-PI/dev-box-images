@@ -3,9 +3,6 @@ name: Post Build
 concurrency: ${{ github.ref }}
 
 on:
-  push:
-    branches:
-      - experimental
   workflow_dispatch:
   
     

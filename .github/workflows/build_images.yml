@@ -3,6 +3,11 @@ name: Build Images
 concurrency: ${{ github.ref }}
 
 on: 
+  push:
+    branches: [main]
+    paths:
+      - 'images/**'
+      - 'scripts/**'
   workflow_dispatch:
 
 jobs:
