@@ -11,17 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      RESOURCE_GROUP_NAME: aqovia-devbox
-      IDENTITY_NAME: aqovia-devcenter-identity
-      GALLARY_NAME: aqovia_compute_gallery
-      DEVCENTER_NETWORK_CONNECTION_NAME: aqovia-devcenter-network-connection
-      PROJECT_NAME: aqovia-devbox-project
-      POOL_NAME: aqovia-devbox-project-pool
-      DEFFINITION_NAME: aqovia-devbox-definition
+      RESOURCE_GROUP_NAME: dlr-devbox
+      IDENTITY_NAME: dlr-devcenter-identity
+      GALLARY_NAME: dlr_compute_gallery
+      DEVCENTER_NETWORK_CONNECTION_NAME: dlr-devcenter-network-connection
+      PROJECT_NAME: dlr-devbox-project
+      POOL_NAME: dlr-devbox-project-pool
+      DEFFINITION_NAME: dlr-devbox-definition
       DEFFINITION_SKU: general_i_8c32gb256ssd_v2 # sku of image (for getting sku list run this command "az devcenter admin sku list --query '[].name' --output table")
       DEFFINITION_IMAGE: Win11-DevBox # name of image (the same name as folder in ./images)
-      DEVCENTER_NAME: aqovia-devcenter
-      DEVCENETER_VNET_NAME: aqovia-devcenter-vnet
+      DEVCENTER_NAME: dlr-devcenter
+      DEVCENETER_VNET_NAME: dlr-devcenter-vnet
       DEVCENETER_SUBNET_NAME: default
 
     steps:
