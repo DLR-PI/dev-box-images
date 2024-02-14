@@ -3,6 +3,12 @@ name: Post Build
 concurrency: ${{ github.ref }}
 
 on:
+  push:
+    branches:    
+    - '*'         # matches every branch that doesn't contain a '/'
+    - '*/*'       # matches every branch containing a single '/'
+    - '**'        # matches every branch
+    - '!main' 
   workflow_dispatch:
   
     
