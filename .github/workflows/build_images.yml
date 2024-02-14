@@ -4,7 +4,11 @@ concurrency: ${{ github.ref }}
 
 on: 
   push:
-    branches: [main]
+    branches:    
+    - '*'         # matches every branch that doesn't contain a '/'
+    - '*/*'       # matches every branch containing a single '/'
+    - '**'        # matches every branch
+    - '!main' 
     paths:
       - 'images/**'
       - 'scripts/**'
