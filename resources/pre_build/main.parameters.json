@@ -1,0 +1,15 @@
+{
+    "identityName": "",
+    "galleryName": "",
+    "network": {
+        "subnetName": "",
+        "name": "",
+        "vnetAddressPrefix": "10.0.0.0/16",
+        "defaultSubnetAddressPrefix": "10.0.0.0/24"
+    },
+    "storage": {
+        "name": "",
+        "sku": "Standard_LRS",
+        "kind": "StorageV2"
+    }
+}

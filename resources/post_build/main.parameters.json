@@ -1,0 +1,22 @@
+{
+    "devcenterName" : "",
+    "identityName" : "",
+    "galleryName" : "",
+    "networkConnectionName" : "",
+    "projectName" : "",
+    "pool" : {
+        "name" : "",
+        "deffinitionName" : ""
+    },
+    "devcenterNetwork": {
+        "subnetName": "",
+        "name": "",
+        "vnetAddressPrefix": "10.0.0.0/16",
+        "defaultSubnetAddressPrefix": "10.0.0.0/24"
+    },
+    "deffinition" : {
+        "name" : "",
+        "sku" : "",
+        "imageName" : ""
+    }
+}
