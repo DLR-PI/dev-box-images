@@ -2,7 +2,7 @@ name: Post Build
 
 concurrency: ${{ github.ref }}
 
-on:
+on: 
   workflow_dispatch:
 
 jobs:
@@ -22,12 +22,14 @@ jobs:
       DEVCENTER_NAME: dlr-devcenter
       DEVCENETER_VNET_NAME: dlr-devcenter-vnet
       DEVCENETER_SUBNET_NAME: default
+      AZURE_TENANT_ID : ${{ vars.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID : ${{ vars.AZURE_CLIENT_ID }}
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Login to Azure
-        run: az login --service-principal -u="${{ secrets.AZURE_CLIENT_ID }}" -p="${{ secrets.AZURE_CLIENT_SECRET }}" --tenant="${{ secrets.AZURE_TENANT_ID }}"
+        run: az login --service-principal -u "${{ vars.AZURE_CLIENT_ID }}" -p "${{ secrets.AZURE_CLIENT_SECRET }}" --tenant "${{ vars.AZURE_TENANT_ID }}"
 
       - name: Ensure Bicep
         run: az bicep upgrade

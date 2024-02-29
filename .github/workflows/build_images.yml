@@ -7,7 +7,8 @@ on:
     branches: [main]
     paths:
       - "images/**"
-      - "scripts/**"
+      - "scripts/**" 
+    
   workflow_dispatch:
 
 jobs:
@@ -67,9 +68,9 @@ jobs:
       - name: Set subnet resource id as SUBNET_ID environment variable
         run: |
           subnetResourceId=$(az network vnet subnet list \
-            --resource-group="${{ env.RESOURCE_GROUP_NAME }}" \
-            --vnet-name="${{ env.VNET_NAME }}" \
-            --query="[?name=='${{ env.SUBNET_NAME }}'].id" \
+            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+            --vnet-name ${{ env.VNET_NAME }} \
+            --query "[?name=='${{ env.SUBNET_NAME }}'].id" \
             --output tsv);
           echo "SUBNET_ID=$subnetResourceId" >> $GITHUB_ENV
 
