@@ -87,7 +87,7 @@ build {
     elevated_user     = build.User
     elevated_password = build.Password
     scripts = [
-      "${path.root}/../../provisioning_scripts/Chocolatey-packages-install-upgrade.ps1"
+      "${path.root}/../../provisioning_scripts/Chocolatey-packages-upgrade.ps1"
     ]
   }
 
@@ -100,7 +100,7 @@ build {
     elevated_user     = build.User
     elevated_password = build.Password
      scripts = [
-      "${path.root}/../../provisioning_scripts/Install-configure-ruby-firewall.ps1",
+      "${path.root}/../../provisioning_scripts/Configure-ruby-firewall.ps1",
       "${path.root}/../../scripts/Install-VS2022.ps1",
       "${path.root}/../../scripts/Install-VSCode.ps1",
       "${path.root}/../../provisioning_scripts/Install-vs-extensions.ps1",

@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Login to Azure
-        run: az login --service-principal -u="${{ secrets.AZURE_CLIENT_ID }}" -p="${{ secrets.AZURE_CLIENT_SECRET }}" --tenant="${{ secrets.AZURE_TENANT_ID }}"
+        run: az login --service-principal -u="${{ env.AZURE_CLIENT_ID }}" -p="${{ secrets.AZURE_CLIENT_SECRET }}" --tenant="${{ env.AZURE_TENANT_ID }}"
 
       - name: Ensure Bicep
         run: az bicep upgrade
@@ -50,16 +50,16 @@ jobs:
       - name: Deploy Resource Group
         working-directory: ./resources
         run: az deployment sub create
-          --name="resource-group-deployment-${{ github.run_id }}"
-          --location="${{ env.LOCATION }}"
+          --name resource-group-deployment-${{ github.run_id }}
+          --location ${{ env.LOCATION }}
           --template-file ./templates/resourceGroup/main.bicep
           --parameters name="${{ env.RESOURCE_GROUP_NAME }}" location="${{ env.LOCATION }}"
 
       - name: Deploy Bicep
         working-directory: ./resources
         run: az deployment group create
-          --name="pre-build-deployment-${{ github.run_id }}"
-          --resource-group="${{ env.RESOURCE_GROUP_NAME }}"
+          --name pre-build-deployment-${{ github.run_id }}
+          --resource-group ${{ env.RESOURCE_GROUP_NAME }}
           --template-file ./pre_build/main.bicep
 
       - name: Set subnet resource id as SUBNET_ID environment variable

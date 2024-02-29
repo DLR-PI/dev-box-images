@@ -55,6 +55,6 @@ jobs:
       - name: Deploy Bicep
         working-directory: ./resources
         run: az deployment group create
-          --name="post_build-${{ github.run_id }}"
-          --resource-group="${{ env.RESOURCE_GROUP_NAME }}"
+          --name post_build-${{ github.run_id }}
+          --resource-group ${{ env.RESOURCE_GROUP_NAME }}
           --template-file ./post_build/main.bicep
