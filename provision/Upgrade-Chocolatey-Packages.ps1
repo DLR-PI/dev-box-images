@@ -30,3 +30,7 @@ choco upgrade Firefox-Dev --pre -y --no-progress
 choco upgrade azure-cli -y --no-progress
 choco upgrade elevate.native -y --no-progress
 choco upgrade sql-server-management-studio -y --no-progress
+choco upgrade azure-documentdb-emulator -y --no-progress
+choco upgrade servicebusexplorer -y --no-progress
+choco upgrade microsoftazurestorageexplorer -y --no-progress
+choco upgrade vagrant -y --no-progress
