@@ -43,6 +43,18 @@ def _img_ver_show_cmd(image):
     return ['sig', 'image-version', 'show', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
             '-r', image['gallery']['name'], '-i', image['name'], '-e', image['version'], '--subscription', image['gallery']['subscription']]
 
+def get_latest_image_version(image):
+    cmd = ['sig', 'image-version', 'list', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
+            '-r', image['gallery']['name'], '-i', image['name'], '--subscription', image['gallery']['subscription']]
+    versions = cli(cmd)
+
+    if versions:
+        latest_version = max(versions, key=lambda v: v['version'])
+        log.info(f'Latest version of image {image["name"]} is {latest_version["version"]}')
+        return latest_version['version']
+    else:
+        log.warning(f'No versions found for image {image["name"]}')
+        return image['version']
 
 def _img_def_create_cmd(image):
     return ['sig', 'image-definition', 'create', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
@@ -111,7 +123,7 @@ def ensure_image_def_version(image):
     image_name = image['name']
     image_version = image['version']
 
-    build = False
+    build = True
 
     log.info(f'Validating image definition and version for {image_name}')
     log.info(f'Checking if image definition exists for {image_name}')
@@ -122,6 +134,8 @@ def ensure_image_def_version(image):
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
         imgver = cli(_img_ver_show_cmd(image))
+
+        image['version'] = get_latest_image_version(image)
 
         if imgver:
             log.info(f'Found existing image version {image_version} for {image_name}')
@@ -229,7 +243,7 @@ async def ensure_image_def_version_async(image):
     image_name = image['name']
     image_version = image['version']
 
-    build = False
+    build = True
 
     log.info(f'Validating image definition and version for {image_name}')
     log.info(f'Checking if image definition exists for {image_name}')
@@ -240,6 +254,8 @@ async def ensure_image_def_version_async(image):
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
         imgver = await cli_async(_img_ver_show_cmd(image))
+
+        image['version'] = get_latest_image_version(image)
 
         if imgver:
             log.info(f'Found existing image version {image_version} for {image_name}')
