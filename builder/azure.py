@@ -142,17 +142,8 @@ def ensure_image_def_version(image):
 
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
-        imgver = cli(_img_ver_show_cmd(image))
 
         image['version'] = get_latest_image_version(image)
-
-        if imgver:
-            log.info(f'Found existing image version {image_version} for {image_name}')
-            log.warning(f'{image_name} was not built because version {image_version} already exists. Please update the version number or delete the existing image version and try again.')
-        else:  # image version does not exist, add it to the list of images to create
-            log.info(f'Image version {image_version} does not exist for {image_name}')
-            build = True
-
     else:  # image definition does not exist, create it and skip the version check
 
         log.info(f'Image definition does not exist for {image_name}')
@@ -262,17 +253,8 @@ async def ensure_image_def_version_async(image):
 
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
-        imgver = await cli_async(_img_ver_show_cmd(image))
 
         image['version'] = get_latest_image_version(image)
-
-        if imgver:
-            log.info(f'Found existing image version {image_version} for {image_name}')
-            log.warning(f'{image_name} was not built because version {image_version} already exists. Please update the version number or delete the existing image version and try again.')
-        else:  # image version does not exist, add it to the list of images to create
-            log.info(f'Image version {image_version} does not exist for {image_name}')
-            build = True
-
     else:  # image definition does not exist, create it and skip the version check
 
         log.info(f'Image definition does not exist for {image_name}')
