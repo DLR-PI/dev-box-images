@@ -43,6 +43,15 @@ def _img_ver_show_cmd(image):
     return ['sig', 'image-version', 'show', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
             '-r', image['gallery']['name'], '-i', image['name'], '-e', image['version'], '--subscription', image['gallery']['subscription']]
 
+def increment_version(version):
+    parts = version.split('.')
+    parts = [int(part) for part in parts]
+    parts[-1] += 1
+    parts = [str(part) for part in parts]
+    new_version = '.'.join(parts)
+    return new_version
+
+
 def get_latest_image_version(image):
     cmd = ['sig', 'image-version', 'list', '-g', image['gallery']['resourceGroup'],
             '-r', image['gallery']['name'], '-i', image['name'], '--subscription', image['gallery']['subscription']]
@@ -50,8 +59,8 @@ def get_latest_image_version(image):
 
     if versions:
         latest_version = max(versions, key=lambda v: v['name'])
-        log.info(f'Latest version of image {image["name"]} is {latest_version}' )
-        return latest_version
+        log.info(f'Latest version of image {image["name"]} is {latest_version['name']}' )
+        return increment_version(latest_version['name'])
     else:
         log.warning(f'No versions found for image {image["name"]}')
         return image['version']
