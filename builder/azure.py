@@ -59,8 +59,8 @@ def get_latest_image_version(image):
 
     if versions:
         latest_version = max(versions, key=lambda v: v['name'])
-        log.info(f'Latest version of image {image["name"]} is {latest_version['name']}' )
-        return increment_version(latest_version['name'])
+        log.info(f'Latest version of image {image["name"]} is {latest_version["name"]}' )
+        return increment_version(latest_version["name"])
     else:
         log.warning(f'No versions found for image {image["name"]}')
         return image['version']
