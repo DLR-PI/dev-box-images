@@ -44,14 +44,14 @@ def _img_ver_show_cmd(image):
             '-r', image['gallery']['name'], '-i', image['name'], '-e', image['version'], '--subscription', image['gallery']['subscription']]
 
 def get_latest_image_version(image):
-    cmd = ['sig', 'image-version', 'list', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
+    cmd = ['sig', 'image-version', 'list', '-g', image['gallery']['resourceGroup'],
             '-r', image['gallery']['name'], '-i', image['name'], '--subscription', image['gallery']['subscription']]
     versions = cli(cmd)
 
     if versions:
-        latest_version = max(versions, key=lambda v: v['version'])
-        log.info(f'Latest version of image {image["name"]} is {latest_version["version"]}')
-        return latest_version['version']
+        latest_version = max(versions, key=lambda v: v['name'])
+        log.info(f'Latest version of image {image["name"]}')
+        return latest_version['name']
     else:
         log.warning(f'No versions found for image {image["name"]}')
         return image['version']
