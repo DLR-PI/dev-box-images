@@ -3,6 +3,8 @@ name: Build Images
 concurrency: ${{ github.ref }}
 
 on:
+  schedule:
+    - cron: '0 0 15 * *'
   push:
     branches: [main]
     paths:
