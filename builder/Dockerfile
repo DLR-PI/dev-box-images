@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-FROM mcr.microsoft.com/azure-cli:latest
+FROM ubuntu:latest
 WORKDIR /
 
 ARG IMAGE_VERSION
@@ -35,7 +35,12 @@ LABEL maintainer="Microsoft" \
     org.label-schema.docker.cmd="docker run ghcr.io/azure/dev-box-images/builder:$IMAGE_VERSION"
 
 # install packer
-RUN apk add --no-cache packer --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apt-get update && apt-get install -y curl unzip && \
+    curl -o packer.zip https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip && \
+    unzip packer.zip && \
+    mv packer /usr/local/bin/packer && \
+    rm packer.zip && \
+    apt-get clean
 
 COPY . /builder.d
 
@@ -43,4 +48,4 @@ COPY . /builder.d
 STOPSIGNAL SIGTERM
 
 CMD [ "" ]
-ENTRYPOINT [ "python", "/builder.d/builder.py" ]
+ENTRYPOINT [ "python3", "/builder.d/builder.py" ]
