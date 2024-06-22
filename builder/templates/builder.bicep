@@ -5,7 +5,7 @@
 param location string = resourceGroup().location
 
 @description('Container image to deploy. Should be of the form repoName/imagename:tag for images stored in public Docker Hub, or a fully qualified URI for other registries.')
-param container string = 'dockerdevbox.azurecr.io/devbox:latest'
+param container string = 'dockerdevbox.azurecr.io/dev/devbox:latest'
 
 @secure()
 @description('The git repository that contains your image.yml and buiild scripts.')

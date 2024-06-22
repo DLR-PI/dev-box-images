@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-FROM ubuntu:latest
+FROM mcr.microsoft.com/azure-cli:latest
 WORKDIR /
 
 ARG IMAGE_VERSION
@@ -34,18 +34,15 @@ LABEL maintainer="Microsoft" \
     org.label-schema.vcs-url="https://github.com/azure/dev-box-images.git" \
     org.label-schema.docker.cmd="docker run ghcr.io/azure/dev-box-images/builder:$IMAGE_VERSION"
 
-# install packer
-RUN apt-get update && apt-get install -y curl unzip && \
-    curl -o packer.zip https://releases.hashicorp.com/packer/1.7.8/packer_1.7.8_linux_amd64.zip && \
-    unzip packer.zip && \
-    mv packer /usr/local/bin/packer && \
-    rm packer.zip && \
-    apt-get clean
-
+# manually download and install packer
+RUN wget https://releases.hashicorp.com/packer/1.7.10/packer_1.7.10_linux_amd64.zip -O /tmp/packer.zip && \
+    unzip /tmp/packer.zip -d /usr/local/bin && \
+    rm /tmp/packer.zip
+    
 COPY . /builder.d
 
 # Terminate container on stop
 STOPSIGNAL SIGTERM
 
 CMD [ "" ]
-ENTRYPOINT [ "python3", "/builder.d/builder.py" ]
+ENTRYPOINT [ "python", "/builder.d/builder.py" ]
