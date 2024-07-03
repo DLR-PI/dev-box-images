@@ -4,13 +4,8 @@ concurrency: ${{ github.ref }}
 
 on:
   schedule:
-    - cron: '0 0 15 * *'
-  push:
-    branches: [main]
-    paths:
-      - "images/**"
-      - "scripts/**" 
-    
+    - cron: "0 0 15 * *"
+
   workflow_dispatch:
 
 jobs:
@@ -27,11 +22,11 @@ jobs:
       SUBNET_NAME: default
       STORAGE_ACCOUNT_NAME: dlrdevboxbuilderstrg
       LOCATION: westeurope
-      AZURE_TENANT_ID : ${{ vars.AZURE_TENANT_ID }}
-      AZURE_CLIENT_ID : ${{ vars.AZURE_CLIENT_ID }}
-      
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Login to Azure
         run: az login --service-principal -u ${{ env.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ env.AZURE_TENANT_ID }}
@@ -39,12 +34,33 @@ jobs:
       - name: Ensure Bicep
         run: az bicep upgrade
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_amd64
+          sudo chmod +x /usr/bin/yq
+
+      - name: Replace image version in YAML file
+        run: |
+          yq e '.version = "1.0.${{ github.run_number }}"' -i ./images/Win11-DevBox/image.yml
+
+      - name: Display the modified YAML file
+        run: cat ./images/Win11-DevBox/image.yml
+
+      - name: Commit and push changes
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add ./images/Win11-DevBox/image.yml
+          git commit -m "Replace version with 1.0.${{ github.run_number }}"
+          git push origin main --force
+
       - name: Update pre_build/main.parameters.json
         uses: restackio/update-json-file-action@v2.0
         with:
           file: ./resources/pre_build/main.parameters.json
           fields: |
-            { 
+            {
               "identityName" : "${{env.IDENTITY_NAME}}",
               "galleryName": "${{env.GALLARY_NAME}}" ,
               "network.name": "${{env.VNET_NAME}}",
