@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    if: !contains(join(github.event.commits.*.message), '+nobuild' )
+    # if: !contains(join(github.event.commits.*.message), '+nobuild' )
 
     env:
       RESOURCE_GROUP_NAME: dlr-devbox
