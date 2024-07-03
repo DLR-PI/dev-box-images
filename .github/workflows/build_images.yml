@@ -47,13 +47,13 @@ jobs:
         run: cat ./images/Win11-DevBox/image.yml
 
       - name: Commit and push changes
-        # if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add ./images/Win11-DevBox/image.yml
           git commit -m "Replace version with 1.0.${{ github.run_number }}"
-          git push origin DO-1159/Increment-devbox-image-versioning --force
+          git push origin main --force
 
       - name: Update pre_build/main.parameters.json
         uses: restackio/update-json-file-action@v2.0
@@ -95,7 +95,7 @@ jobs:
       - name: Deploy Build ACI Containers
         run: python "./builder/build.py" --async
           --repository="${{ github.repositoryUrl }}"
-          --revision="DO-1159/Increment-devbox-image-versioning"
+          --revision="${{ github.sha }}"
           --token="${{ github.token }}"
           --client-id="${{ env.AZURE_CLIENT_ID }}"
           --client-secret="${{ secrets.AZURE_CLIENT_SECRET }}"
