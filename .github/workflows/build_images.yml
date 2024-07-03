@@ -5,11 +5,6 @@ concurrency: ${{ github.ref }}
 on:
   schedule:
     - cron: "0 0 15 * *"
-  push:
-    branches: [main]
-    paths:
-      - "images/**"
-      - "scripts/**"
 
   workflow_dispatch:
 
@@ -50,6 +45,15 @@ jobs:
 
       - name: Display the modified YAML file
         run: cat ./images/Win11-DevBox/image.yml
+
+      - name: Commit and push changes
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add ./images/Win11-DevBox/image.yml
+          git commit -m "Replace version with 1.0.${{ github.run_number }}"
+          git push origin main
 
       - name: Update pre_build/main.parameters.json
         uses: restackio/update-json-file-action@v2.0
