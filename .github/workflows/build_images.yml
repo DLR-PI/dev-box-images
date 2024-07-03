@@ -46,7 +46,7 @@ jobs:
 
       - name: Replace image version in YAML file
         run: |
-          yq e '.version = 1.0.${{ github.run_number }}' -i ./images/Win11-DevBox/image.yml
+          yq e '.version = "1.0.${{ github.run_number }}"' -i ./images/Win11-DevBox/image.yml
 
       - name: Display the modified YAML file
         run: cat ./images/Win11-DevBox/image.yml
