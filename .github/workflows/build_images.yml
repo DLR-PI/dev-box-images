@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 0 15 * *'
   push:
-    branches: [main]
+    branches: [main, DO-1159/increment-devbox-image-versioning]
     paths:
       - "images/**"
       - "scripts/**"
@@ -46,7 +46,7 @@ jobs:
 
       - name: Replace image version in YAML file
         run: |
-          yq e -i '.version = 1.0.${{ github.run_number }}' ./images/Win11-DevBox/image.yml
+          yq e '.version = 1.0.${{ github.run_number }}' -i ./images/Win11-DevBox/image.yml
 
       - name: Display the modified YAML file
         run: cat ./images/Win11-DevBox/image.yml
