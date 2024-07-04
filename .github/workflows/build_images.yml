@@ -11,6 +11,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'write'
+      packages: 'write'
+      actions: 'read'
 
     if: "!contains(join(github.event.commits.*.message), '+nobuild')"
 
@@ -26,7 +30,16 @@ jobs:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
 
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.COMMIT_APP_ID }}
+          private-key: ${{ secrets.COMMIT_APP_SECRET }}
+
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Login to Azure
         run: az login --service-principal -u ${{ env.AZURE_CLIENT_ID }} -p ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ env.AZURE_TENANT_ID }}
@@ -47,7 +60,7 @@ jobs:
         run: cat ./images/Win11-DevBox/image.yml
 
       - name: Commit and push changes
-        if: github.ref == 'refs/heads/main'
+        #if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
