@@ -1,6 +1,9 @@
 name: Oidc Demo
 
 on:
+  push:
+    branches:
+      - poc/github-azure-oidc-demo
   workflow_dispatch:
 
 jobs:
