@@ -24,3 +24,10 @@ jobs:
       - name: 'Run az commands'
         run: |
           az account show
+
+      - name: Azure PowerShell script
+        uses: azure/powershell@v1
+        with:
+          azPSVersion: "latest"
+          inlineScript: |
+            Get-AzContext
