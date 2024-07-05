@@ -24,4 +24,3 @@ jobs:
       - name: 'Run az commands'
         run: |
           az account show
-          az group list
