@@ -12,7 +12,6 @@ choco upgrade dotnet-6.0-windowshosting -y --no-progress
 choco upgrade dotnetfx -y --no-progress
 choco upgrade dotpeek -y --no-progress
 choco upgrade resharper -y --no-progress
-choco upgrade sqltoolbelt -y --allow-empty-checksums --no-progress
 choco upgrade redis-desktop-manager -y --version 0.9.3 --no-progress
 choco upgrade adoptopenjdkopenj9jdk -y --no-progress
 choco upgrade azure-data-studio-sql-server-admin-pack -y --no-progress
@@ -34,3 +33,5 @@ choco upgrade azure-documentdb-emulator -y --no-progress
 choco upgrade servicebusexplorer -y --no-progress
 choco upgrade microsoftazurestorageexplorer -y --no-progress
 choco upgrade vagrant -y --no-progress
+# sqltoolbelt must be installed after it's dependencies e.g. sql-server-management-studio
+choco upgrade sqltoolbelt -y --allow-empty-checksums --no-progress
