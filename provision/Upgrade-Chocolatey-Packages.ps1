@@ -1,3 +1,4 @@
+choco upgrade choco-upgrade-all-at-startup -y --no-progress
 choco upgrade sysinternals -y --ignore-checksums --no-progress
 choco upgrade slack -y --no-progress
 choco upgrade powershell-core -y --no-progress
