@@ -39,6 +39,7 @@ Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP' -Recurse | Get-
 [Environment]::SetEnvironmentVariable('Dev_InventoryDB_Server', 'nl-ams-ptldb-a1', [EnvironmentVariableTarget]::Machine)
 [Environment]::SetEnvironmentVariable('Dev_SalesforcePartialDB_Server', 'nl-ams-ptldb-a1', [EnvironmentVariableTarget]::Machine)
 
+# Set Azure tenant environment variable
 [Environment]::SetEnvironmentVariable('AZURE_TENANT_ID', '', [EnvironmentVariableTarget]::Machine)
 
 # Set ASPNETCORE_ENVIRONMENT environment variable to Development
