@@ -34,9 +34,11 @@ LABEL maintainer="Microsoft" \
     org.label-schema.vcs-url="https://github.com/azure/dev-box-images.git" \
     org.label-schema.docker.cmd="docker run ghcr.io/azure/dev-box-images/builder:$IMAGE_VERSION"
 
-# install packer
-RUN apk add --no-cache packer --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
-
+# manually download and install packer
+RUN wget https://releases.hashicorp.com/packer/1.7.10/packer_1.7.10_linux_amd64.zip -O /tmp/packer.zip && \
+    unzip /tmp/packer.zip -d /usr/local/bin && \
+    rm /tmp/packer.zip
+    
 COPY . /builder.d
 
 # Terminate container on stop

@@ -43,6 +43,27 @@ def _img_ver_show_cmd(image):
     return ['sig', 'image-version', 'show', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
             '-r', image['gallery']['name'], '-i', image['name'], '-e', image['version'], '--subscription', image['gallery']['subscription']]
 
+def increment_version(version):
+    parts = version.split('.')
+    parts = [int(part) for part in parts]
+    parts[-1] += 1
+    parts = [str(part) for part in parts]
+    new_version = '.'.join(parts)
+    return new_version
+
+
+def get_latest_image_version(image):
+    cmd = ['sig', 'image-version', 'list', '-g', image['gallery']['resourceGroup'],
+            '-r', image['gallery']['name'], '-i', image['name'], '--subscription', image['gallery']['subscription']]
+    versions = cli(cmd)
+
+    if versions:
+        latest_version = max(versions, key=lambda v: v['name'])
+        log.info(f'Latest version of image {image["name"]} is {latest_version["name"]}' )
+        return increment_version(latest_version["name"])
+    else:
+        log.warning(f'No versions found for image {image["name"]}')
+        return image['version']
 
 def _img_def_create_cmd(image):
     return ['sig', 'image-definition', 'create', '--only-show-errors', '-g', image['gallery']['resourceGroup'],
@@ -111,7 +132,7 @@ def ensure_image_def_version(image):
     image_name = image['name']
     image_version = image['version']
 
-    build = False
+    build = True
 
     log.info(f'Validating image definition and version for {image_name}')
     log.info(f'Checking if image definition exists for {image_name}')
@@ -121,15 +142,8 @@ def ensure_image_def_version(image):
 
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
-        imgver = cli(_img_ver_show_cmd(image))
 
-        if imgver:
-            log.info(f'Found existing image version {image_version} for {image_name}')
-            log.warning(f'{image_name} was not built because version {image_version} already exists. Please update the version number or delete the existing image version and try again.')
-        else:  # image version does not exist, add it to the list of images to create
-            log.info(f'Image version {image_version} does not exist for {image_name}')
-            build = True
-
+        image['version'] = get_latest_image_version(image)
     else:  # image definition does not exist, create it and skip the version check
 
         log.info(f'Image definition does not exist for {image_name}')
@@ -229,7 +243,7 @@ async def ensure_image_def_version_async(image):
     image_name = image['name']
     image_version = image['version']
 
-    build = False
+    build = True
 
     log.info(f'Validating image definition and version for {image_name}')
     log.info(f'Checking if image definition exists for {image_name}')
@@ -239,15 +253,8 @@ async def ensure_image_def_version_async(image):
 
         log.info(f'Found existing image definition for {image_name}')
         log.info(f'Checking if image version {image_version} exists for {image_name}')
-        imgver = await cli_async(_img_ver_show_cmd(image))
 
-        if imgver:
-            log.info(f'Found existing image version {image_version} for {image_name}')
-            log.warning(f'{image_name} was not built because version {image_version} already exists. Please update the version number or delete the existing image version and try again.')
-        else:  # image version does not exist, add it to the list of images to create
-            log.info(f'Image version {image_version} does not exist for {image_name}')
-            build = True
-
+        image['version'] = get_latest_image_version(image)
     else:  # image definition does not exist, create it and skip the version check
 
         log.info(f'Image definition does not exist for {image_name}')
