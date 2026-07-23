@@ -71,6 +71,11 @@ build {
 
   #https://github.com/rgl/packer-plugin-windows-update
   provisioner "windows-update" {
+    search_criteria = "AutoSelectOnWebSites=1 and IsInstalled=0"
+    filters = [
+      "exclude:$_.Title -like '*Preview*'",
+      "include:$true",
+    ]
   }
 
   provisioner "powershell" {
