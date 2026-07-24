@@ -73,6 +73,7 @@ build {
   provisioner "windows-update" {
     search_criteria = "AutoSelectOnWebSites=1 and IsInstalled=0"
     filters = [
+      "exclude:$_.Title -like '*KB5007651*'",
       "exclude:$_.Title -like '*Preview*'",
       "include:$true",
     ]
