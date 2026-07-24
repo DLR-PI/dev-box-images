@@ -30,4 +30,3 @@ publisher: dlr
 offer: DevBox
 replicaLocations:
   - westeurope
-buildResourceGroup: dlr-devbox
