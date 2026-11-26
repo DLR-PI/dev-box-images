@@ -14,7 +14,7 @@ choco upgrade dotnetfx -y --no-progress
 choco upgrade dotpeek -y --no-progress
 choco upgrade resharper -y --no-progress
 choco upgrade redis-desktop-manager -y --version 0.9.3 --no-progress
-choco upgrade adoptopenjdkopenj9jdk -y --no-progress
+choco upgrade temurin11 -y --no-progress
 choco upgrade azure-data-studio-sql-server-admin-pack -y --no-progress
 # choco upgrade notepadplusplus -y --no-progress
 choco upgrade wsus-offline-update -y --no-progress
